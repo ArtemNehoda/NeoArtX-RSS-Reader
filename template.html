@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <title>NeoArtX RSS-Reader</title>
+  </head>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="overflow: hidden;" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Description</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-description">
+        <div class="container-fluid" id="modal-description"" >
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <body>
+
+    <div id="point"></div>
+    <div class="jumbotron bg-dark ">
+  <h1 class="display-4 text-light">RSS reader</h1>
+  <p class="lead text-light">Simple rss reader for hexlet project</p>
+  <hr class="my-4">
+  <div class="col-lg-6">
+    <div class="input-group mb-4 id="url-input-group">
+  <input type="text" class="form-control" placeholder="Write here" aria-label="Write here" aria-describedby="basic-addon2" id="url-input">
+  <div class="input-group-append">
+    <button id="url-form-button" class="btn btn-secondary" type="button">Add</button>
+  </div>
+  <div id="error-url-text" class="invalid-feedback">Incorrect URL</div>
+  <div id="wait-url-text" class="valid-feedback">Wait please</div>
+</div>
+  </div>
+</div>
+<div class ="container-fluid">
+<div class="row">
+<ul id="rssNameList" class="list-group col-lg-4">
+</ul>
+
+<div id="newsList" class="list-group col-lg-7">
+</div>
+</div>
+</div>
+
+  </body>
+</html>
