@@ -18,11 +18,6 @@ export default () => ({
   isAddedNewsItem(item) {
     return this.addedNews.find(e => e.title === item.title);
   },
-  addItemToNews(item) {
-    if (!this.isAddedNewsItem(item)) {
-      this.addedNews.unshift(item);
-    }
-  },
   getItemFromGuid(guid) {
     return this.addedNews.find(e => e.guid === guid);
   },
