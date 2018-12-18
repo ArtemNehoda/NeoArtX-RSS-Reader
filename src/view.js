@@ -5,15 +5,15 @@ const rssInputButton = $('#url-form-button');
 const rssNameList = $('#rssNameList');
 const newsList = $('#newsList');
 
-export const setModalDescription = (modal, description) => {
+export const renderModalDescription = (modal, description) => {
   modal.find('.modal-body').html(description);
 };
 
-export const setModalTitle = (modal, title) => {
+export const renderModalTitle = (modal, title) => {
   modal.find('.modal-title').text(title);
 };
 
-export const setInputState = (inputState, message) => {
+export const renderInputState = (inputState, message) => {
   if (inputState === 'correct') {
     rssInputButton.attr('disabled', false);
     rssInputElement.attr('disabled', false);

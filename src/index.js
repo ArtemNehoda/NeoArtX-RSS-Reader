@@ -8,7 +8,7 @@ import isURL from 'validator/lib/isURL';
 import { watch } from 'melanke-watchjs';
 import { getNewsItems, getChannelname, getChannelDescription } from './util';
 import { renderChannel, renderNewsItem } from './renderers';
-import { setInputState, appendNews, deleteNews, prependRssName, setModalDescription, setModalTitle, deleteChannelNames } from './view';
+import { renderInputState, appendNews, deleteNews, prependRssName, renderModalDescription, renderModalTitle, deleteChannelNames } from './view';
 import getState from './state';
 import localSaver from './localSaver';
 
@@ -43,17 +43,17 @@ const makeChannelObj = (parsedData, rssUrl) => ({
   link: rssUrl,
 });
 
-const getXmlDocument = (rssUrl, corsProxy, isUpdate) => {
-  if (!isUpdate) state.inputState.state = 'wait';
-  const URL = normalizeUrl(rssUrl, { forceHttp: true }).trim();
-  return axios.get(`${corsProxy}${URL}`, { timeout: 10000 })
+const getXmlDocument = (rssUrl, corsProxy, isUpdated) => {
+  if (!isUpdated) state.inputState.state = 'wait';
+  const url = normalizeUrl(rssUrl, { forceHttp: true }).trim();
+  return axios.get(`${corsProxy}${url}`, { timeout: 10000 })
     .then((response) => {
       const parsedData = parseXML(response.data);
-      if (!isUpdate) {
+      if (!isUpdated) {
         if ($(parsedData).find('rss').length <= 0) throw new Error('is not RSS Url');
       }
-      const channel = makeChannelObj(parsedData, URL);
-      if (!isUpdate) {
+      const channel = makeChannelObj(parsedData, url);
+      if (!isUpdated) {
         if (!state.isAddedChannel(channel)) {
           state.addedChannels = [...state.addedChannels, channel];
           state.addedNews = [...channel.items, ...state.addedNews];
@@ -65,7 +65,7 @@ const getXmlDocument = (rssUrl, corsProxy, isUpdate) => {
       }
     })
     .catch((err) => {
-      if (!isUpdate) {
+      if (!isUpdated) {
         state.inputState.message = err;
         state.inputState.state = 'error';
       }
@@ -78,7 +78,7 @@ const updateNews = () => {
   window.setTimeout(
     () => {
       Promise.all(promises)
-        .then(() => updateNews());
+        .then(updateNews());
     }
     , 10000,
   );
@@ -101,15 +101,15 @@ watch(state, 'addedChannels', () => {
 });
 
 watch(state.inputState, 'state', () => {
-  setInputState(state.inputState.state, state.inputState.message);
+  renderInputState(state.inputState.state, state.inputState.message);
 });
 
 watch(state.modal, 'modalDescription', () => {
-  setModalDescription(modal, state.modal.modalDescription);
+  renderModalDescription(modal, state.modal.modalDescription);
 });
 
 watch(state.modal, 'modalTitle', () => {
-  setModalTitle(modal, state.modal.modalTitle);
+  renderModalTitle(modal, state.modal.modalTitle);
 });
 
 rssInputElement.on('keyup', () => {
