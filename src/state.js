@@ -1,5 +1,5 @@
 
-export default () => ({
+export default {
   inputState: {
     state: 'done',
     message: '',
@@ -22,5 +22,5 @@ export default () => ({
     return this.addedNews.find(e => e.guid === guid);
   },
 
-});
+};
 
