@@ -16,6 +16,8 @@ export default () => {
   const rssInputElement = $('#url-input');
   const rssInputButton = $('#url-form-button');
   const modal = $('#exampleModal');
+  const rssNameList = $('#rssNameList');
+  const newsList = $('#newsList');
   const state = stateObj;
 
   const loadLocalData = () => {
@@ -85,23 +87,26 @@ export default () => {
   };
 
   watch(state, 'addedNews', () => {
-    deleteNews();
+    deleteNews(newsList);
     state.addedNews.forEach((e) => {
-      appendNews(renderNewsItem(e));
+      appendNews(newsList, renderNewsItem(e));
     });
     localSaver.saveNews(state.addedNews);
   });
 
   watch(state, 'addedChannels', () => {
-    deleteChannelNames();
+    deleteChannelNames(rssNameList);
     state.addedChannels.forEach((e) => {
-      prependRssName(renderChannel(e));
+      prependRssName(rssNameList, renderChannel(e));
     });
     localSaver.saveChannels(state.addedChannels);
   });
 
   watch(state.inputState, 'state', () => {
-    renderInputState(state.inputState.state, state.inputState.message);
+    renderInputState(
+      rssInputElement, rssInputButton,
+      state.inputState.state, state.inputState.message,
+    );
   });
 
   watch(state.modal, 'modalDescription', () => {

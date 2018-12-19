@@ -1,10 +1,5 @@
 import $ from 'jquery';
 
-const rssInputElement = $('#url-input');
-const rssInputButton = $('#url-form-button');
-const rssNameList = $('#rssNameList');
-const newsList = $('#newsList');
-
 export const renderModalDescription = (modal, description) => {
   modal.find('.modal-body').html(description);
 };
@@ -13,7 +8,7 @@ export const renderModalTitle = (modal, title) => {
   modal.find('.modal-title').text(title);
 };
 
-export const renderInputState = (inputState, message) => {
+export const renderInputState = (rssInputElement, rssInputButton, inputState, message) => {
   if (inputState === 'correct') {
     rssInputButton.attr('disabled', false);
     rssInputElement.attr('disabled', false);
@@ -42,21 +37,21 @@ export const renderInputState = (inputState, message) => {
   }
 };
 
-export const prependRssName = (html) => {
+export const prependRssName = (rssNameList, html) => {
   rssNameList.prepend(html);
 };
 
-export const prependNews = (html) => {
+export const prependNews = (newsList, html) => {
   newsList.prepend(html);
 };
 
-export const appendNews = (html) => {
+export const appendNews = (newsList, html) => {
   newsList.append(html);
 };
-export const deleteNews = () => {
+export const deleteNews = (newsList) => {
   newsList.empty();
 };
 
-export const deleteChannelNames = () => {
+export const deleteChannelNames = (rssNameList) => {
   rssNameList.empty();
 };
