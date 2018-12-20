@@ -9,7 +9,7 @@ import { watch } from 'melanke-watchjs';
 import { getNewsItems, getChannelname, getChannelDescription } from './util';
 import { renderChannel, renderNewsItem } from './renderers';
 import { renderInputState, appendNews, deleteNews, prependRssName, renderModalDescription, renderModalTitle, deleteChannelNames } from './view';
-import stateObj from './state';
+import getState from './state';
 import localSaver from './localSaver';
 
 export default () => {
@@ -18,7 +18,7 @@ export default () => {
   const modal = $('#exampleModal');
   const rssNameList = $('#rssNameList');
   const newsList = $('#newsList');
-  const state = stateObj;
+  const state = getState();
 
   const loadLocalData = () => {
     if (localSaver.loadSavedNews()) state.addedNews = localSaver.loadSavedNews();
@@ -36,16 +36,17 @@ export default () => {
     }
   };
 
-  const parseXML = data => new DOMParser().parseFromString(data, 'application/xml');
-
-  const makeChannelObj = (parsedData, rssUrl) => ({
-    description: getChannelDescription(parsedData),
-    items: getNewsItems(parsedData),
-    title: getChannelname(parsedData),
-    link: rssUrl,
-  });
-
   const getXmlDocument = (rssUrl, corsProxy, isUpdated) => {
+    const parseXML = data => new DOMParser().parseFromString(data, 'application/xml');
+
+    const makeChannelObj = (parsedData, url) => ({
+      description: getChannelDescription(parsedData),
+      items: getNewsItems(parsedData),
+      title: getChannelname(parsedData),
+      link: url,
+    });
+
+
     if (!isUpdated) state.inputState.state = 'wait';
     const url = normalizeUrl(rssUrl, { forceHttp: true }).trim();
     return axios.get(`${corsProxy}${url}`, { timeout: 10000 })
