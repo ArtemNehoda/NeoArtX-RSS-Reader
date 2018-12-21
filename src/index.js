@@ -36,26 +36,25 @@ export default () => {
     }
   };
 
-  const getXmlDocument = (rssUrl, corsProxy, isUpdated) => {
-    const parseXML = data => new DOMParser().parseFromString(data, 'application/xml');
-
-    const makeChannelObj = (parsedData, url) => ({
+  const makeChannelObj = (data, url, isUpdated) => {
+    const parsedData = new DOMParser().parseFromString(data, 'application/xml');
+    if (!isUpdated) {
+      if ($(parsedData).find('rss').length <= 0) throw new Error('is not RSS Url');
+    }
+    return {
       description: getChannelDescription(parsedData),
       items: getNewsItems(parsedData),
       title: getChannelname(parsedData),
       link: url,
-    });
+    };
+  };
 
-
+  const getXmlDocument = (rssUrl, corsProxy, isUpdated) => {
     if (!isUpdated) state.inputState.state = 'wait';
     const url = normalizeUrl(rssUrl, { forceHttp: true }).trim();
     return axios.get(`${corsProxy}${url}`, { timeout: 10000 })
       .then((response) => {
-        const parsedData = parseXML(response.data);
-        if (!isUpdated) {
-          if ($(parsedData).find('rss').length <= 0) throw new Error('is not RSS Url');
-        }
-        const channel = makeChannelObj(parsedData, url);
+        const channel = makeChannelObj(response.data, url, isUpdated);
         if (!isUpdated) {
           if (!state.isAddedChannel(channel)) {
             state.addedChannels = [...state.addedChannels, channel];
