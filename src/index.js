@@ -136,7 +136,8 @@ export default () => {
     state.modal.modalTitle = ' ';
   });
 
-  loadLocalData();
-  updateNews();
+  Promise.resolve(window.location)
+    .then(loadLocalData())
+    .then(updateNews());
 };
 
