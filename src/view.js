@@ -16,7 +16,7 @@ export const renderInputState = (rssInputElement, rssInputButton, inputState, me
     rssInputElement.removeClass('is-invalid');
   }
   if (inputState === 'done') {
-    rssInputButton.attr('disabled', false);
+    rssInputButton.attr('disabled', true);
     rssInputElement.attr('disabled', false);
     rssInputElement.val('');
     rssInputElement.removeClass('is-valid');

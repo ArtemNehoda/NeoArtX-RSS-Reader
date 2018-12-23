@@ -28,8 +28,10 @@ export default () => {
   const CORS_PROXY_URL = 'https://cors-anywhere.herokuapp.com/';
 
   const validateURL = (str) => {
-    if (isURL(str.trim().toLowerCase()) || str.trim().length === 0) {
+    if (isURL(str.trim().toLowerCase())) {
       state.inputState.state = 'correct';
+    } else if (str.trim().length === 0) {
+      state.inputState.state = 'done';
     } else {
       state.inputState.message = 'invalide URL';
       state.inputState.state = 'error';
