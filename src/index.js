@@ -36,16 +36,14 @@ export default () => {
     }
   };
 
-  const makeChannelObj = (data, url, isUpdated) => {
+  const makeChannelObj = (data) => {
     const parsedData = new DOMParser().parseFromString(data, 'application/xml');
-    if (!isUpdated) {
-      if ($(parsedData).find('rss').length <= 0) throw new Error('is not RSS Url');
-    }
+
+    if ($(parsedData).find('rss').length <= 0) { throw new Error('is not RSS'); }
     return {
       description: getChannelDescription(parsedData),
       items: getNewsItems(parsedData),
       title: getChannelname(parsedData),
-      link: url,
     };
   };
 
@@ -54,7 +52,7 @@ export default () => {
     const url = normalizeUrl(rssUrl, { forceHttp: true }).trim();
     return axios.get(`${corsProxy}${url}`, { timeout: 10000 })
       .then((response) => {
-        const channel = makeChannelObj(response.data, url, isUpdated);
+        const channel = { ...makeChannelObj(response.data), link: url };
         if (!isUpdated) {
           if (!state.isAddedChannel(channel)) {
             state.addedChannels = [...state.addedChannels, channel];
@@ -77,13 +75,7 @@ export default () => {
   const updateNews = () => {
     const promises = state.addedChannels.map(channel =>
       getXmlDocument(channel.link, CORS_PROXY_URL, true));
-    window.setTimeout(
-      () => {
-        Promise.all(promises)
-          .then(updateNews());
-      }
-      , 10000,
-    );
+    window.setTimeout(() => Promise.all(promises).then(() => updateNews()), 10000);
   };
 
   watch(state, 'addedNews', () => {
@@ -137,7 +129,7 @@ export default () => {
   });
 
   Promise.resolve(window.location)
-    .then(loadLocalData())
-    .then(updateNews());
+    .then(() => loadLocalData())
+    .then(() => updateNews());
 };
 
