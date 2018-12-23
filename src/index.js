@@ -75,7 +75,7 @@ export default () => {
   const updateNews = () => {
     const promises = state.addedChannels.map(channel =>
       getXmlDocument(channel.link, CORS_PROXY_URL, true));
-    window.setTimeout(() => Promise.all(promises).then(() => updateNews()), 10000);
+    window.setTimeout(() => Promise.all(promises).then(updateNews), 10000);
   };
 
   watch(state, 'addedNews', () => {
@@ -129,7 +129,7 @@ export default () => {
   });
 
   Promise.resolve(window.location)
-    .then(() => loadLocalData())
-    .then(() => updateNews());
+    .then(loadLocalData)
+    .then(updateNews);
 };
 
