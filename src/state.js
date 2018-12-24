@@ -12,10 +12,10 @@ export default () => ({
    },
   addedChannels: [],
   addedNews: [],
-  isAddedChannel(channel) {
+  hasChannel(channel) {
     return this.addedChannels.find(e => e.link === channel.link);
   },
-  isAddedNewsItem(item) {
+  hasNewsItem(item) {
     return this.addedNews.find(e => e.title === item.title);
   },
   getItemFromGuid(guid) {

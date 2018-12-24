@@ -6,7 +6,7 @@ import normalizeUrl from 'normalize-url';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import isURL from 'validator/lib/isURL';
 import { watch } from 'melanke-watchjs';
-import { getNewsItems, getChannelname, getChannelDescription } from './util';
+import parseRssChannel from './rssParser';
 import { renderChannel, renderNewsItem } from './renderers';
 import { renderInputState, appendNews, deleteNews, prependRssName, renderModalDescription, renderModalTitle, deleteChannelNames } from './view';
 import getState from './state';
@@ -38,31 +38,20 @@ export default () => {
     }
   };
 
-  const makeChannelObj = (data) => {
-    const parsedData = new DOMParser().parseFromString(data, 'application/xml');
-
-    if ($(parsedData).find('rss').length <= 0) { throw new Error('is not RSS'); }
-    return {
-      description: getChannelDescription(parsedData),
-      items: getNewsItems(parsedData),
-      title: getChannelname(parsedData),
-    };
-  };
-
-  const getXmlDocument = (rssUrl, corsProxy, isUpdated) => {
+  const loadRSS = (rssUrl, corsProxy, isUpdated) => {
     if (!isUpdated) state.inputState.state = 'wait';
     const url = normalizeUrl(rssUrl, { forceHttp: true }).trim();
     return axios.get(`${corsProxy}${url}`, { timeout: 10000 })
       .then((response) => {
-        const channel = { ...makeChannelObj(response.data), link: url };
+        const channel = { ...parseRssChannel(response.data), link: url };
         if (!isUpdated) {
-          if (!state.isAddedChannel(channel)) {
+          if (!state.hasChannel(channel)) {
             state.addedChannels = [...state.addedChannels, channel];
             state.addedNews = [...channel.items, ...state.addedNews];
             state.inputState.state = 'done';
           } else throw new Error('is already added Channel');
         } else {
-          channel.items = channel.items.filter(item => !state.isAddedNewsItem(item));
+          channel.items = channel.items.filter(item => !state.hasNewsItem(item));
           state.addedNews = [...channel.items, ...state.addedNews];
         }
       })
@@ -76,8 +65,8 @@ export default () => {
 
   const updateNews = () => {
     const promises = state.addedChannels.map(channel =>
-      getXmlDocument(channel.link, CORS_PROXY_URL, true));
-    window.setTimeout(() => Promise.all(promises).then(updateNews), 10000);
+      loadRSS(channel.link, CORS_PROXY_URL, true));
+    window.setTimeout(() => Promise.all(promises).then(updateNews).catch(updateNews), 10000);
   };
 
   watch(state, 'addedNews', () => {
@@ -115,7 +104,7 @@ export default () => {
     validateURL(rssInputElement.val());
   });
   rssInputButton.on('click', () => {
-    getXmlDocument(rssInputElement.val(), CORS_PROXY_URL, false);
+    loadRSS(rssInputElement.val(), CORS_PROXY_URL, false);
   });
 
   modal.on('show.bs.modal', (event) => {
