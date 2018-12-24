@@ -66,7 +66,7 @@ export default () => {
   const updateNews = () => {
     const promises = state.addedChannels.map(channel =>
       loadRSS(channel.link, CORS_PROXY_URL, true));
-    window.setTimeout(() => Promise.all(promises).then(updateNews).catch(updateNews), 20000);
+    window.setTimeout(() => Promise.all(promises).finally(updateNews), 20000);
   };
 
   watch(state, 'addedNews', () => {
