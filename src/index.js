@@ -121,6 +121,7 @@ export default () => {
 
   Promise.resolve(window.location)
     .then(loadLocalData)
-    .then(updateNews);
+    .then(updateNews)
+    .catch(err => Window.alert(err));
 };
 
