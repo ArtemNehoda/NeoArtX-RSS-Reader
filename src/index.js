@@ -119,9 +119,7 @@ export default () => {
     state.modal.modalTitle = ' ';
   });
 
-  Promise.resolve(window.location)
-    .then(loadLocalData)
-    .then(updateNews)
-    .catch(err => Window.alert(err));
+  loadLocalData();
+  updateNews();
 };
 
